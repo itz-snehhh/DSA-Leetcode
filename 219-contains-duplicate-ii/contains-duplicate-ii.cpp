@@ -8,7 +8,7 @@ public:
             }
             window.insert(nums[i]);
 
-            if(window.size() > k){
+            if(i>=k){
                 window.erase(nums[i-k]);
             }
         }
