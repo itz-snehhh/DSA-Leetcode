@@ -1,39 +1,48 @@
 class Solution {
 public:
     string minWindow(string s, string t) {
-        int m = s.length();
-        int n = t.length();
-        if (m < n)
-            return "";
-
-        vector<int> hash(256, 0);
-        for (char c : t) {
-            hash[c]++;
-        }
-
+        unordered_map<char, int> need;
+        for (char c : t) need[c]++;
+        
+        int required = need.size();
+        int formed = 0;
+        
+        unordered_map<char, int> window;
+        
         int l = 0, r = 0;
         int minLen = INT_MAX;
-        int sIndex = -1, cnt = 0;
-
-        while (r < m) {
-            if (hash[s[r]] > 0) {
-                cnt++;
+        int start = 0;
+        
+        while (r < s.size()) {
+            char c = s[r];
+            window[c]++;
+            
+            if (need.count(c) && window[c] == need[c]) {
+                formed++;
             }
-            hash[s[r]]--;
-
-            while (cnt == n) {
+            
+            // shrink window
+            while (l <= r && formed == required) {
+                
+                // update answer
                 if (r - l + 1 < minLen) {
                     minLen = r - l + 1;
-                    sIndex = l;
+                    start = l;
                 }
-                hash[s[l]]++;
-                if (hash[s[l]] > 0) {
-                    cnt--;
+                
+                char leftChar = s[l];
+                window[leftChar]--;
+                
+                if (need.count(leftChar) && window[leftChar] < need[leftChar]) {
+                    formed--;
                 }
+                
                 l++;
             }
+            
             r++;
         }
-        return sIndex == -1 ? "" : s.substr(sIndex, minLen);
+        
+        return minLen == INT_MAX ? "" : s.substr(start, minLen);
     }
 };
