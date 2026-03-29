@@ -1,43 +1,37 @@
 class Solution {
 public:
-// Complexity becomes O(n²) time and O(n²) space.”
-// Much better than brute-force O(n³).
 
     string longestPalindrome(string s) {
-        int n = s.size();
-        vector<vector<bool>> dp(n, vector<bool>(n, false));
+        if (s.empty()) return "";
+        if (s.size() == 1) return s;
 
-        int maxLen = 1, start = 0;
+        int start = 0, maxLength = 1;
 
-        // Length 1 substrings
-        for (int i = 0; i < n; i++)
-            dp[i][i] = true;
-
-        // Length 2 substrings
-        for (int i = 0; i < n - 1; i++) {
-            if (s[i] == s[i+1]) {
-                dp[i][i+1] = true;
-                start = i;
-                maxLen = 2;
-            }
-        }
-
-        // Length >= 3
-        for (int len = 3; len <= n; len++) {
-            for (int i = 0; i + len - 1 < n; i++) {
-                int j = i + len - 1;
-
-                if (s[i] == s[j] && dp[i+1][j-1]) {
-                    dp[i][j] = true;
-
-                    if (len > maxLen) {
-                        start = i;
-                        maxLen = len;
-                    }
+        for (int i = 0; i < s.size(); ++i) {
+            // Odd length palindromes
+            int low = i, high = i;
+            while (low >= 0 && high < s.size() && s[low] == s[high]) {
+                if (high - low + 1 > maxLength) {
+                    start = low;
+                    maxLength = high - low + 1;
                 }
+                --low;
+                ++high;
+            }
+
+            // Even length palindromes
+            low = i, high = i + 1;
+            while (low >= 0 && high < s.size() && s[low] == s[high]) {
+                if (high - low + 1 > maxLength) {
+                    start = low;
+                    maxLength = high - low + 1;
+                }
+                --low;
+                ++high;
             }
         }
 
-        return s.substr(start, maxLen);
+        return s.substr(start, maxLength);
+
     }
 };
